@@ -1,0 +1,132 @@
+.ring-of-power {
+  display: block;
+  position: absolute;
+  background-image: url(../../img/ring-of-power.svg);
+  width: 34rem;
+  height: 34rem;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 1;
+  pointer-events: none;
+  background-position-y: 5px;
+  top: .5rem;
+  left: .5rem;
+  transition: .5s cubic-bezier(.47,1.64,.41,.8);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .start .ring-of-power.animated {
+    animation: App-logo-spin infinite 200s linear;
+  }
+}
+
+.page {
+  position: relative;
+  z-index: 0;
+  border-radius: 50%;
+  background: white linear-gradient(180deg, #9CE4EA -14.55%, #FFFFFF 43.89%);
+  height: 29rem;
+  width: 29rem;
+  padding: 0;
+  margin: 2.5rem;
+  outline: solid 0.5rem white;
+  overflow: hidden;
+  transition: .5s cubic-bezier(.47,1.64,.41,.8);
+}
+
+.title {
+  font-family: 'Vollkorn', serif;
+  text-transform: uppercase;
+  font-size: 1.875rem;
+  color: var(--dark-purple);
+  margin: 0 auto;
+  padding: 4rem 0 0;
+  position: relative;
+  z-index: 3;
+  text-shadow:
+  -1px -1px 0 #fff,  
+   1px -1px 0 #fff,
+   -1px 1px 0 #fff,
+    1px 1px 0 #fff;
+}
+
+.title b {
+  color: white;
+  text-shadow: none;
+}
+
+.description {
+  width: 18em;
+  margin: .75em auto 1.2em;
+  font-size: 1rem;
+}
+
+.description-text {
+  mix-blend-mode: difference;
+  color: white;
+}
+
+.description:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url(../../img/sphere-contrast-silhouette.svg);
+  background-repeat: no-repeat;
+  background-position: -1em -1em;
+
+  border-radius: 50%;
+}
+
+.description:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, #4C284F 0%, #8C4261 100%);
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+
+.btn {
+  font-size: 1rem;
+  padding: .6em 2em;
+  border: none;
+  border-radius: .5em;
+  color: var(--dark-purple);
+  background-color: var(--light-yellow);
+  letter-spacing: .05rem;
+  cursor: pointer;
+}
+
+.start-game {
+  position: relative;
+}
+
+.btn:hover {
+  transform: scale(1.02);
+}
+
+.btn:active {
+  transform: scale(1.02) translate(1px, 1px);
+}
+
+.mt-olympus {
+  margin-top: 1.5em;
+  position: relative;
+  pointer-events: none;
+  width: 24rem;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

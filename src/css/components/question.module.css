@@ -1,0 +1,16 @@
+.container {
+    text-align: left;
+    margin-right: 2.5rem;
+    flex-grow: 1;
+}
+
+.title {
+    font-size: .9375rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.answers {
+    display: flex;
+    gap: .65em;
+}

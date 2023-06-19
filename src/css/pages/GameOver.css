@@ -1,0 +1,41 @@
+.check .ring-of-power {
+    transform: scale(1.43);
+}
+
+.check .page {
+    border-radius: 10%;
+    height: 33rem;
+    width: 33rem;
+    margin: .5rem;
+    padding: 2em 4em;
+    outline: solid 0.25rem white;
+}
+
+.check .questions {
+    display: flex;
+    flex-direction: column;
+    height: 94%;
+    justify-content: space-around;
+    opacity: 0;
+    transition: 1s;
+}
+
+.check .questions.visible {
+    opacity: 1;
+}
+
+.check .poseidon {
+    position: absolute;
+    bottom: -4px;
+    right: -8px;
+    width: 7rem;
+    transition: .2s;
+}
+
+.check .poseidon:hover {
+    transform: scale(1.1)
+}
+
+.btn.check-answers {
+    height: 2.2em;
+}
