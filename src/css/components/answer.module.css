@@ -19,14 +19,14 @@
     cursor: not-allowed;
 }
 
-.answer:hover[disabled=false] {
+.answer:hover:not(.disabled) {
     background: #4D5B9E;
     color: white;
     transform: scale(1.02);
     cursor: pointer;
 }
 
-.answer:active[disabled=false] {
+.answer:active:not(.disabled) {
     transform: translate(1px, 1px);
 }
 
