@@ -33,7 +33,13 @@
     color: white;
 }
 
-.selected.correct {
+.answer.selected.correct {
+    background: var(--sea-green);
+    color: #293264;
+    opacity: 1;
+}
+
+.disabled.correct {
     background: var(--sea-green);
     color: #293264;
 }

@@ -14,7 +14,7 @@
 .check .questions {
     display: flex;
     flex-direction: column;
-    height: 94%;
+    height: 88.5%;
     justify-content: space-around;
     opacity: 0;
     transition: 1s;
@@ -38,4 +38,10 @@
 
 .btn.check-answers {
     height: 2.2em;
+}
+
+.score {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 auto .75em;
 }

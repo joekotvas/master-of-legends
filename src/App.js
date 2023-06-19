@@ -19,38 +19,47 @@ function greekify(text) {
 }
 
 function App() {
-
-  // Game State
-  const [gameState, setGameState] = React.useState('start')
-
-  // Question and answer data
+  const [game, setGame] = React.useState({
+    state: 'start',
+    score: 0,
+  })
   const [questions, setQuestions] = React.useState([])
 
-  // Display quiz page
   function startGame() {
     // Remove animation so transition can be triggered
     document.querySelector('.ring-of-power').classList.remove('animated')
-    setGameState('play')
+    setGame({
+      state: 'play',
+      score: 0,
+    })
   }
   
-  // Display answer page
   function gameOver() {
     console.log('game over')
-    setGameState('check')
+    setGame(
+      game => ({
+        state: 'check',
+        score: questions.reduce((acc, q) => {
+          return acc + q.answers.filter(a => a.selected && a.correct).length
+        }, 0)
+    })
+    )
   }
 
-  // Display start page
   function resetGame() {
-    setGameState('start')
+    setGame({
+      state: 'start',
+      score: 0,
+    })
     // Restart animation after transition
     setTimeout(() => {
       document.querySelector('.ring-of-power').classList.add('animated')
     }, 500);
-    // Get new questions
     getQuestions()
   }
 
   const getQuestions = React.useCallback(async () => {
+    console.log('getting questions')
     let questions = []
     try {
       const response = await fetch('https://opentdb.com/api.php?amount=5&category=20&difficulty=easy&type=multiple')
@@ -67,6 +76,7 @@ function App() {
         .map(a => {
           return {
             id      : nanoid(),
+            questionID: q.id,
             answer  : greekify(decodeHTMLEntities(a)),
             correct : a === q.correct_answer,
             selected: false,
@@ -75,6 +85,7 @@ function App() {
           }
         })
     })
+    console.log(questions)
     setQuestions(questions)
   }, [setQuestions])
   
@@ -83,24 +94,11 @@ function App() {
     getQuestions()
   },[getQuestions])
 
-  function getQuestionElements() {
-    const questionElements = questions.map(q => {
-      return <Question 
-                key       = { q.id       }
-                id        = { q.id       }
-                gameState = { gameState  }
-                question  = { q.question }
-                answers   = { q.answers  }
-              />
-    })
-    return questionElements
-  }
-
   // Runs when an answer is selected
   function changeAnswer(e) {
     setQuestions(questions => questions.map(
       q => {
-        if (q.id === e.target.parentNode.parentNode.parentNode.id) {
+        if (q.id === e.target.dataset.questionId) {
           return {
             ...q,
             answers: q.answers.map(a => ({
@@ -114,15 +112,23 @@ function App() {
     )
   }
 
-  const questionElements = getQuestionElements()
+  const questionElements = questions.map(q => {
+    return <Question 
+              key       = { q.id       }
+              id        = { q.id       }
+              gameState = { game.state }
+              question  = { q.question }
+              answers   = { q.answers  }
+            />
+  })
   
   return (
-    <div className={"app " + gameState}>
+    <div className={"app " + game.state}>
       <div className="ring-of-power animated"></div>
-        <article className={"page " + gameState + "-page"}>
-          { gameState === 'start'  && <StartPage    startGame={startGame}      /> }
-          { gameState === 'play'   && <PlayPage   checkAnswers={gameOver} questions={questionElements} /> }
-          { gameState === 'check'  && <GameOverPage resetGame={resetGame} questions={questionElements} /> }
+        <article className={"page " + game.state + "-page"}>
+          { game.state === 'start'  && <StartPage    startGame={startGame}      /> }
+          { game.state === 'play'   && <PlayPage   checkAnswers={gameOver} questions={questionElements} /> }
+          { game.state === 'check'  && <GameOverPage resetGame={resetGame} questions={questionElements} game={game} /> }
         </article>
     </div>
   )

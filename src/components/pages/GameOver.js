@@ -13,6 +13,7 @@ function GameOverPage(props) {
             <div className="questions">
                 {props.questions}
             </div>
+            <p className="score">You scored {props.game.score}/5 correct answers.</p>
             <button className="btn check-answers" onClick={props.resetGame}>Plαy Agαιn</button>
             <img className="poseidon" src={poseidon} alt="Poseidon" />
         </div>
