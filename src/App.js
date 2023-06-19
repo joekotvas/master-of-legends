@@ -13,34 +13,18 @@ function decodeHTMLEntities(text) {
   return textArea.value;
 }
 
+// Replace latin letters with greek equivalents
+function greekify(text) {
+  return text.replace(/[aeit]/g, match => 'αειτ'['aeit'.indexOf(match)]);
+}
+
 function App() {
 
   // Game State
   const [gameState, setGameState] = React.useState('start')
 
-  // API Data held in state
-  const [data, setData] = React.useState([])
-
   // Question and answer data
   const [questions, setQuestions] = React.useState([])
-
-  // Get questions from API
-  React.useEffect(() => {
-    const fetchData = async() => {
-      try {
-        const response = await fetch('https://opentdb.com/api.php?amount=5&category=20&difficulty=easy&type=multiple')
-        const apiData = await response.json()
-        setData(apiData.results)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  },[])
-
-  React.useEffect(() => {
-    getQuestions()
-  }, [data])
 
   // Display quiz page
   function startGame() {
@@ -63,43 +47,41 @@ function App() {
       document.querySelector('.ring-of-power').classList.add('animated')
     }, 500);
     // Get new questions
-    getQuestions().then(questions => {
-      setQuestions(questions)
-    })
+    getQuestions()
   }
 
-  async function getQuestions() {
-    if (data.length === 0) return
-    console.log('Reloaded questions')
-
-    const newQuestions = []
-
-    // Loop through questions
-    for (let i = 0; i < data.length; i++) {
-      newQuestions[i] = data[i]
-      
-      // Decode HTML entities
-      newQuestions[i].question = decodeHTMLEntities(data[i].question)
-
-      // Add unique ID to each question
-      newQuestions[i].id = nanoid()
-
-      // Set up answers
-      newQuestions[i].answers = [ data[i].correct_answer, ...data[i].incorrect_answers ]
+  const getQuestions = React.useCallback(async () => {
+    let questions = []
+    try {
+      const response = await fetch('https://opentdb.com/api.php?amount=5&category=20&difficulty=easy&type=multiple')
+      const data     = await response.json()
+      questions      = [ ...data.results ]
+    } catch (error) {
+      console.log(error)
+    }
+    questions.forEach(q => {
+      q.question = greekify(decodeHTMLEntities(q.question))
+      q.id = nanoid()
+      q.answers = [ q.correct_answer, ...q.incorrect_answers ]
         .sort()
         .map(a => {
           return {
             id      : nanoid(),
-            answer  : a,
-            correct : a === data[i].correct_answer,
+            answer  : greekify(decodeHTMLEntities(a)),
+            correct : a === q.correct_answer,
             selected: false,
             disabled: false,
             onChange: (e) => { changeAnswer(e) },
           }
         })
-    }
-    setQuestions(newQuestions)
-  }
+    })
+    setQuestions(questions)
+  }, [setQuestions])
+  
+  // Get questions from API
+  React.useEffect(() => {
+    getQuestions()
+  },[getQuestions])
 
   function getQuestionElements() {
     const questionElements = questions.map(q => {
@@ -116,32 +98,21 @@ function App() {
 
   // Runs when an answer is selected
   function changeAnswer(e) {
-    let newQuestions = []
-
-    // Loop through questions and answers to find the selected answer
-    for (let i = 0; i < questions.length; i++) {
-
-      // If the question ID matches the question ID of the selected answer
-      if (questions[i].id === e.target.parentNode.parentNode.parentNode.id) {
-        console.log('Matched question ID for ', questions[i].question)
-        newQuestions.push({
-          ...questions[i],
-          answers: questions[i].answers.map(a =>
-            (a.answer === e.target.value) ? { ...a, selected: true  }
-                                          : { ...a, selected: false }
-          )
-        }) 
-      }
-
-      // If the question ID does not match the question ID of the selected answer
-      else {
-        newQuestions.push({ ...questions[i] })
-      }
-    } 
-    console.log(newQuestions)
-    setQuestions(newQuestions)
-    console.log(questions)
-}
+    setQuestions(questions => questions.map(
+      q => {
+        if (q.id === e.target.parentNode.parentNode.parentNode.id) {
+          return {
+            ...q,
+            answers: q.answers.map(a => ({
+                ...a, 
+                selected: a.answer === e.target.value 
+            }))
+          }
+        }
+        else return { ...q }
+      })
+    )
+  }
 
   const questionElements = getQuestionElements()
   
